@@ -178,7 +178,7 @@ function Footer() {
   return (
     <footer style={styles.footer}>
       <div style={styles.footerContent}>
-        <p>© 2024 微剧场 · 仅供学习交流</p>
+        <p>© 2026 微剧场 · 仅供学习交流</p>
       </div>
     </footer>
   )

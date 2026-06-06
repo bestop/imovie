@@ -97,7 +97,7 @@ function DramaForm({ drama, onSave, onCancel }) {
       synopsis: '',
       poster: '',
       episodes: 12,
-      year: 2024,
+      year: 2026,
       genre: '',
       linkUrl: '',
       linkType: '夸克网盘',
