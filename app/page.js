@@ -188,6 +188,7 @@ export default function Home() {
   const [dramas, setDramas] = useState([])
   const [featured, setFeatured] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetch('/api/dramas')
@@ -195,7 +196,9 @@ export default function Home() {
       .then(data => {
         setDramas(data)
         setFeatured(data.find(d => d.featured) || data[0])
+        setLoading(false)
       })
+      .catch(() => setLoading(false))
   }, [])
 
   const filteredDramas = dramas.filter(drama =>
@@ -208,8 +211,12 @@ export default function Home() {
       <Header searchQuery={searchQuery} onSearchChange={setSearchQuery} />
       <Hero drama={featured} />
       <main style={styles.main}>
-        <SectionHeader title="精彩影剧" count={filteredDramas.length} />
-        {filteredDramas.length > 0 ? (
+        <SectionHeader title="精彩影剧" count={loading ? 0 : filteredDramas.length} />
+        {loading ? (
+          <div style={styles.noResults}>
+            <p>加载中...</p>
+          </div>
+        ) : filteredDramas.length > 0 ? (
           <div className="drama-grid" style={styles.grid}>
             {filteredDramas.map((drama, index) => (
               <DramaCard key={drama.id} drama={drama} index={index} />
