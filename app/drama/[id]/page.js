@@ -1,4 +1,4 @@
-import { getDramaById } from '../../../../lib/db'
+import { getDramaById } from '../../../lib/db'
 import { notFound } from 'next/navigation'
 
 export async function generateMetadata({ params }) {
