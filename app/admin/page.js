@@ -376,39 +376,57 @@ export default function Admin() {
   }
 
   const handleEdit = (drama) => {
+    console.log('编辑剧集:', drama)
     setEditingDrama(drama)
     setShowForm(true)
   }
 
   const handleSave = async (data) => {
     try {
+      console.log('开始保存...', { editingDrama, data })
+      
       let response
-      if (editingDrama) {
-        response = await fetch(`/api/dramas/${editingDrama.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        })
+      let url
+      let method
+      
+      if (editingDrama && editingDrama.id) {
+        url = `/api/dramas/${editingDrama.id}`
+        method = 'PUT'
       } else {
-        response = await fetch('/api/dramas', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        })
+        url = '/api/dramas'
+        method = 'POST'
+      }
+
+      console.log('发送请求:', { url, method, data })
+
+      response = await fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+
+      console.log('收到响应:', response.status)
+
+      let result
+      try {
+        result = await response.json()
+        console.log('响应数据:', result)
+      } catch (e) {
+        console.error('解析响应失败:', e)
       }
 
       if (response.ok) {
-        alert(editingDrama ? '✅ 剧集更新成功！' : '✅ 剧集添加成功！')
+        alert(editingDrama?.id ? '✅ 剧集更新成功！' : '✅ 剧集添加成功！')
+        setShowForm(false)
+        setEditingDrama(null)
+        await loadDramas()
       } else {
-        alert('❌ 保存失败，请稍后重试')
-        return
+        const errorMsg = result?.error || '未知错误'
+        alert('❌ 保存失败: ' + errorMsg)
+        console.error('保存失败:', errorMsg)
       }
-
-      setShowForm(false)
-      setEditingDrama(null)
-      await loadDramas()
     } catch (error) {
-      console.error('保存错误:', error)
+      console.error('保存出错:', error)
       alert('❌ 保存出错：' + error.message)
     }
   }
@@ -423,7 +441,8 @@ export default function Admin() {
           alert('✅ 删除成功！')
           await loadDramas()
         } else {
-          alert('❌ 删除失败，请稍后重试')
+          const result = await response.json()
+          alert('❌ 删除失败: ' + (result.error || '未知错误'))
         }
       } catch (error) {
         console.error('删除错误:', error)
