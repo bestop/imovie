@@ -7,10 +7,10 @@
     "episodes": 12,
     "year": 2026,
     "genre": "综艺竞技",
-    "linkUrl": "https://pan.quark.cn/s/xxxxx",
+    "linkUrl": "https://pan.quark.cn/s/",
     "linkType": "夸克网盘",
     "quality": "4K",
-    "featured": true,
+    "featured": false,
     "badge": "新上线",
     "createdAt": "2026-06-07T01:34:14.569Z"
   },
@@ -25,7 +25,7 @@
     "linkUrl": "https://pan.quark.cn/s/xxxxx",
     "linkType": "夸克网盘",
     "quality": "4K",
-    "featured": false,
+    "featured": true,
     "badge": "热播",
     "createdAt": "2026-06-07T01:34:14.571Z"
   },

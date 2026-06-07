@@ -28,6 +28,5 @@ yarn-error.log*
 # Vercel
 .vercel
 
-# Data - Keep dramas.json in repo
-/data/*
-!/data/dramas.json
+# Data
+/data
