@@ -1,7 +1,10 @@
-import fs from 'fs/promises'
-import path from 'path'
 
-const DATA_FILE = path.join(process.cwd(), 'data', 'dramas.json')
+// 初始化数据
+const fs = require('fs');
+const path = require('path');
+
+const dataDir = path.join(__dirname, 'data');
+const dataFile = path.join(dataDir, 'dramas.json');
 
 const DEFAULT_DATA = [
   {
@@ -94,91 +97,12 @@ const DEFAULT_DATA = [
     badge: '复仇爽剧',
     createdAt: new Date(Date.now() - 345600000).toISOString()
   }
-]
+];
 
-async function readData() {
-  try {
-    const data = await fs.readFile(DATA_FILE, 'utf8')
-    return JSON.parse(data)
-  } catch (error) {
-    console.log('数据文件不存在或读取失败，使用默认数据')
-    return DEFAULT_DATA
-  }
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
 }
 
-async function writeData(data) {
-  try {
-    await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-    await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2))
-  } catch (error) {
-    console.error('写入数据文件失败:', error)
-  }
-}
-
-export async function getDramas() {
-  const dramas = await readData()
-  return dramas.sort(function(a, b) {
-    return new Date(b.createdAt) - new Date(a.createdAt)
-  })
-}
-
-export async function getFeaturedDrama() {
-  const dramas = await readData()
-  return dramas.find(function(d) {
-    return d.featured
-  }) || dramas[0]
-}
-
-export async function getDramaById(id) {
-  const dramas = await readData()
-  return dramas.find(function(d) {
-    return d.id === parseInt(id)
-  })
-}
-
-export async function addDrama(drama) {
-  const dramas = await readData()
-  const newDrama = {
-    ...drama,
-    id: Date.now(),
-    createdAt: new Date().toISOString()
-  }
-  if (newDrama.featured) {
-    dramas.forEach(function(d) {
-      d.featured = false
-    })
-  }
-  dramas.unshift(newDrama)
-  await writeData(dramas)
-  return newDrama
-}
-
-export async function updateDrama(id, updates) {
-  const dramas = await readData()
-  const index = dramas.findIndex(function(d) {
-    return d.id === parseInt(id)
-  })
-  if (index === -1) return null
-
-  if (updates.featured) {
-    dramas.forEach(function(d) {
-      d.featured = false
-    })
-  }
-
-  dramas[index] = {
-    ...dramas[index],
-    ...updates
-  }
-  await writeData(dramas)
-  return dramas[index]
-}
-
-export async function deleteDrama(id) {
-  const dramas = await readData()
-  const filtered = dramas.filter(function(d) {
-    return d.id !== parseInt(id)
-  })
-  await writeData(filtered)
-  return true
-}
+fs.writeFileSync(dataFile, JSON.stringify(DEFAULT_DATA, null, 2));
+console.log('✅ 数据文件初始化成功！');
+console.log(`位置：${dataFile}`);
