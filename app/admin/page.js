@@ -91,8 +91,23 @@ function AdminHeader({ onLogout }) {
 }
 
 function DramaForm({ drama, onSave, onCancel }) {
-  const [formData, setFormData] = useState(
-    drama || {
+  const [formData, setFormData] = useState(() => {
+    if (drama) {
+      return {
+        title: drama.title || '',
+        synopsis: drama.synopsis || '',
+        poster: drama.poster || '',
+        episodes: drama.episodes || 12,
+        year: drama.year || 2026,
+        genre: drama.genre || '',
+        linkUrl: drama.linkUrl || '',
+        linkType: drama.linkType || '夸克网盘',
+        quality: drama.quality || 'HD',
+        featured: drama.featured || false,
+        badge: drama.badge || ''
+      }
+    }
+    return {
       title: '',
       synopsis: '',
       poster: '',
@@ -105,7 +120,25 @@ function DramaForm({ drama, onSave, onCancel }) {
       featured: false,
       badge: ''
     }
-  )
+  })
+
+  useEffect(() => {
+    if (drama) {
+      setFormData({
+        title: drama.title || '',
+        synopsis: drama.synopsis || '',
+        poster: drama.poster || '',
+        episodes: drama.episodes || 12,
+        year: drama.year || 2026,
+        genre: drama.genre || '',
+        linkUrl: drama.linkUrl || '',
+        linkType: drama.linkType || '夸克网盘',
+        quality: drama.quality || 'HD',
+        featured: drama.featured || false,
+        badge: drama.badge || ''
+      })
+    }
+  }, [drama])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -348,30 +381,54 @@ export default function Admin() {
   }
 
   const handleSave = async (data) => {
-    if (editingDrama) {
-      await fetch(`/api/dramas/${editingDrama.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      })
-    } else {
-      await fetch('/api/dramas', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      })
+    try {
+      let response
+      if (editingDrama) {
+        response = await fetch(`/api/dramas/${editingDrama.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        })
+      } else {
+        response = await fetch('/api/dramas', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        })
+      }
+
+      if (response.ok) {
+        alert(editingDrama ? '✅ 剧集更新成功！' : '✅ 剧集添加成功！')
+      } else {
+        alert('❌ 保存失败，请稍后重试')
+        return
+      }
+
+      setShowForm(false)
+      setEditingDrama(null)
+      await loadDramas()
+    } catch (error) {
+      console.error('保存错误:', error)
+      alert('❌ 保存出错：' + error.message)
     }
-    setShowForm(false)
-    setEditingDrama(null)
-    loadDramas()
   }
 
   const handleDelete = async (id) => {
     if (confirm('确定要删除这个剧集吗？')) {
-      await fetch(`/api/dramas/${id}`, {
-        method: 'DELETE'
-      })
-      loadDramas()
+      try {
+        const response = await fetch(`/api/dramas/${id}`, {
+          method: 'DELETE'
+        })
+        if (response.ok) {
+          alert('✅ 删除成功！')
+          await loadDramas()
+        } else {
+          alert('❌ 删除失败，请稍后重试')
+        }
+      } catch (error) {
+        console.error('删除错误:', error)
+        alert('❌ 删除出错：' + error.message)
+      }
     }
   }
 

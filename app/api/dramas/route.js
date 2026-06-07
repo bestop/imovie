@@ -1,12 +1,23 @@
 import { getDramas, addDrama } from '../../../lib/db'
 
 export async function GET() {
-  const dramas = await getDramas()
-  return Response.json(dramas)
+  try {
+    const dramas = await getDramas()
+    return Response.json(dramas)
+  } catch (error) {
+    console.error('GET /api/dramas 错误:', error)
+    return Response.json({ error: '读取数据失败' }, { status: 500 })
+  }
 }
 
 export async function POST(request) {
-  const drama = await request.json()
-  const newDrama = await addDrama(drama)
-  return Response.json(newDrama)
+  try {
+    const drama = await request.json()
+    console.log('添加新剧集:', drama)
+    const newDrama = await addDrama(drama)
+    return Response.json(newDrama)
+  } catch (error) {
+    console.error('POST /api/dramas 错误:', error)
+    return Response.json({ error: '添加剧集失败' }, { status: 500 })
+  }
 }
