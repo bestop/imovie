@@ -5,7 +5,9 @@ export async function GET(request, { params }) {
   if (!drama) {
     return Response.json({ error: 'Not found' }, { status: 404 })
   }
-  return Response.json(drama)
+  return Response.json(drama, {
+    headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
+  })
 }
 
 export async function PUT(request, { params }) {

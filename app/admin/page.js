@@ -348,22 +348,32 @@ export default function Admin() {
   }
 
   const handleSave = async (data) => {
-    if (editingDrama) {
-      await fetch(`/api/dramas/${editingDrama.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      })
-    } else {
-      await fetch('/api/dramas', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      })
+    try {
+      let res
+      if (editingDrama) {
+        res = await fetch(`/api/dramas/${editingDrama.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        })
+      } else {
+        res = await fetch('/api/dramas', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        })
+      }
+      if (!res.ok) {
+        const err = await res.json()
+        alert('保存失败: ' + (err.error || '未知错误'))
+        return
+      }
+      setShowForm(false)
+      setEditingDrama(null)
+      loadDramas()
+    } catch (e) {
+      alert('保存失败: ' + e.message)
     }
-    setShowForm(false)
-    setEditingDrama(null)
-    loadDramas()
   }
 
   const handleDelete = async (id) => {

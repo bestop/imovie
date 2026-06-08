@@ -2,7 +2,9 @@ import { getDramas, addDrama } from '../../../lib/db-neon'
 
 export async function GET() {
   const dramas = await getDramas()
-  return Response.json(dramas)
+  return Response.json(dramas, {
+    headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
+  })
 }
 
 export async function POST(request) {

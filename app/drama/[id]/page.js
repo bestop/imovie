@@ -10,11 +10,17 @@ export default function DramaDetail() {
 
   useEffect(() => {
     if (params.id) {
-      fetch(`/api/dramas`)
-        .then(res => res.json())
+      fetch(`/api/dramas/${params.id}`)
+        .then(res => {
+          if (!res.ok) throw new Error('Not found')
+          return res.json()
+        })
         .then(data => {
-          const found = data.find(d => d.id === parseInt(params.id))
-          setDrama(found)
+          setDrama(data)
+          setLoading(false)
+        })
+        .catch(() => {
+          setDrama(null)
           setLoading(false)
         })
     }
