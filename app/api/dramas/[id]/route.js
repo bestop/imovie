@@ -1,4 +1,4 @@
-import { getDramaById, updateDrama, deleteDrama } from '../../../../lib/db'
+import { getDramaById, updateDrama, deleteDrama } from '../../../../lib/db-neon'
 
 export async function GET(request, { params }) {
   const drama = await getDramaById(params.id)

@@ -1,4 +1,4 @@
-import { getDramas, addDrama } from '../../../lib/db'
+import { getDramas, addDrama } from '../../../lib/db-neon'
 
 export async function GET() {
   const dramas = await getDramas()
