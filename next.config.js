@@ -12,8 +12,13 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'trae-api-cn.mchost.guru'
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com'
       }
-    ]
+    ],
+    formats: ['image/avif', 'image/webp']
   }
 }
 
